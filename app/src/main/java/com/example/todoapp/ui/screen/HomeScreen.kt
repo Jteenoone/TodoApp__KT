@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -17,11 +18,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,10 +44,12 @@ import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Task
+import com.example.todoapp.ui.compose.BottomBarItem
 import com.example.todoapp.ui.compose.CardResult
 import com.example.todoapp.ui.compose.TaskGroupCard
 import com.example.todoapp.ui.compose.TaskProgressCard
 import com.example.todoapp.utils.CategorySummaries
+import java.nio.channels.Selector
 
 @Composable
 fun HomeScreen(
@@ -51,6 +59,11 @@ fun HomeScreen(
         topBar = {
             HomeTopBar(name = name)
         },
+        bottomBar = {
+            HomeBottom(
+                selectedIndex = 0,
+            )
+        }
     ) {
         innerPadding ->
         HomeContent(modifier = Modifier.padding(innerPadding))
@@ -364,6 +377,76 @@ fun HomeContent(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Composable
+fun HomeBottom(
+    selectedIndex: Int = 0,
+    onItemClick:(Int) -> Unit = {},
+    onAddClick: () -> Unit = {}
+) {
+  Box(
+      modifier = Modifier.fillMaxWidth()
+          .height(88.dp)
+  )  {
+      Surface(
+          modifier = Modifier
+              .fillMaxWidth()
+              .height(64.dp)
+              .align(Alignment.BottomCenter),
+          color = Color(0xFFEDE7FF),
+          shape = RoundedCornerShape(
+              topStart = 24.dp,
+              topEnd = 24.dp,
+          )
+      ) {
+          Row(
+              modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+          ) {
+              BottomBarItem(
+                  icon = Icons.Default.Home,
+                  selected = selectedIndex == 0,
+                  onClick = {onItemClick(0)}
+              )
+              BottomBarItem(
+                  icon = Icons.Default.CalendarMonth,
+                  selected = selectedIndex == 1,
+                  onClick = {onItemClick(1)}
+              )
+              Spacer(modifier = Modifier.width(56.dp))
+              BottomBarItem(
+                  icon = Icons.AutoMirrored.Filled.Article,
+                  selected = selectedIndex == 2,
+                  onClick = {onItemClick(2)}
+              )
+
+              BottomBarItem(
+                  icon = Icons.Default.Group,
+                  selected = selectedIndex == 3,
+                  onClick = {onItemClick(3)}
+              )
+          }
+      }
+      FloatingActionButton(
+          onClick = onAddClick,
+          modifier = Modifier.size(56.dp)
+              .align(Alignment.TopCenter),
+          shape = CircleShape,
+          containerColor = Color(0xFF5F33E1),
+          contentColor = Color.White,
+          elevation = FloatingActionButtonDefaults.elevation(
+              defaultElevation = 8.dp
+          )
+      ) {
+          Icon(
+             imageVector = Icons.Default.Add,
+              contentDescription = "Add task",
+              modifier = Modifier.size(30.dp)
+          )
+      }
+  }
 }
 
 @Preview (
