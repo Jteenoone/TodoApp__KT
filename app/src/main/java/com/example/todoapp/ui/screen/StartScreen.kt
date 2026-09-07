@@ -30,16 +30,21 @@ import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
 
 @Composable
-fun StartScreen() {
+fun StartScreen(
+    onStart: ()-> Unit
+) {
     Scaffold(
 
     ) {
-        innerPadding -> StartContent(modifier = Modifier.padding(innerPadding))
+        innerPadding -> StartContent(
+        onStart=onStart,
+        modifier = Modifier.padding(innerPadding))
     }
 }
 
 @Composable
 fun StartContent(
+    onStart: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -94,7 +99,7 @@ fun StartContent(
             ),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.padding(bottom = 50.dp).padding(horizontal = 24.dp).fillMaxWidth(),
-            onClick = {}
+            onClick = onStart
         ) {
             Box(
                 modifier= Modifier.fillMaxWidth().padding(vertical = 8.dp)
