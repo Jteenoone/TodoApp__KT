@@ -131,25 +131,154 @@ fun HomeContent(modifier: Modifier = Modifier) {
             color = Color(0xFF8758F1),
             backgroundColor = Color(0xFFEDE5FF),
             icon = Icons.Default.Person
+        ),
+        Category(
+            id = 3,
+            name = "Daily Study",
+            color = Color(0xFFFF8845),
+            backgroundColor = Color(0xFFFFE8D8),
+            icon = Icons.Default.MenuBook
+        ),
+        Category(
+            id = 4,
+            name = "Health & Fitness",
+            color = Color(0xFF41A865),
+            backgroundColor = Color(0xFFDFF5E7),
+            icon = Icons.Default.FitnessCenter
+        ),
+        Category(
+            id = 5,
+            name = "Shopping",
+            color = Color(0xFFFFB300),
+            backgroundColor = Color(0xFFFFF2CC),
+            icon = Icons.Default.ShoppingCart
+        ),
+        Category(
+            id = 6,
+            name = "Home Tasks",
+            color = Color(0xFF2196F3),
+            backgroundColor = Color(0xFFDDEEFF),
+            icon = Icons.Default.Home
         )
     )
     val tasks = listOf(
+        // Office Project
         Task(
             id = 1,
             title = "Design shopping application",
             categoryId = 1,
-            progress = 0.85f,
+            progress = 0.85f
         ),
         Task(
             id = 2,
-            title = "Create database",
+            title = "Create project database",
             categoryId = 1,
             progress = 0.72f
         ),
         Task(
             id = 3,
-            title = "Redesign portfolio",
+            title = "Prepare weekly report",
+            categoryId = 1,
+            progress = 1f
+        ),
+        Task(
+            id = 4,
+            title = "Team meeting preparation",
+            categoryId = 1,
+            progress = 0.45f
+        ),
+
+        // Personal Project
+        Task(
+            id = 5,
+            title = "Redesign personal portfolio",
             categoryId = 2,
+            progress = 1f
+        ),
+        Task(
+            id = 6,
+            title = "Update GitHub profile",
+            categoryId = 2,
+            progress = 0.65f
+        ),
+        Task(
+            id = 7,
+            title = "Build weather application",
+            categoryId = 2,
+            progress = 0.35f
+        ),
+
+        // Daily Study
+        Task(
+            id = 8,
+            title = "Learn Jetpack Compose",
+            categoryId = 3,
+            progress = 0.8f
+        ),
+        Task(
+            id = 9,
+            title = "Practice Kotlin exercises",
+            categoryId = 3,
+            progress = 0.5f
+        ),
+        Task(
+            id = 10,
+            title = "Read Android documentation",
+            categoryId = 3,
+            progress = 1f
+        ),
+        Task(
+            id = 11,
+            title = "Review database lesson",
+            categoryId = 3,
+            progress = 0.25f
+        ),
+
+        // Health & Fitness
+        Task(
+            id = 12,
+            title = "Morning workout",
+            categoryId = 4,
+            progress = 1f
+        ),
+        Task(
+            id = 13,
+            title = "Run five kilometers",
+            categoryId = 4,
+            progress = 0.6f
+        ),
+        Task(
+            id = 14,
+            title = "Drink enough water",
+            categoryId = 4,
+            progress = 0.75f
+        ),
+
+        // Shopping
+        Task(
+            id = 15,
+            title = "Buy groceries",
+            categoryId = 5,
+            progress = 0.4f
+        ),
+        Task(
+            id = 16,
+            title = "Order a new keyboard",
+            categoryId = 5,
+            progress = 1f
+        ),
+
+        // Home Tasks
+        Task(
+            id = 17,
+            title = "Clean the bedroom",
+            categoryId = 6,
+            progress = 0.9f
+        ),
+        Task(
+            id = 18,
+            title = "Wash clothes",
+            categoryId = 6,
             progress = 1f
         )
     )

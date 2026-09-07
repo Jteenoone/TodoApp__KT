@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskCardColors
@@ -90,13 +91,14 @@ fun TaskProgressCard(
                 ) {
                     Text(
                         text = category.name,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        fontSize = 12.sp
                     )
-                    Spacer(modifier = Modifier.height(7.dp))
                     Text(
                         text = task.title,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Color.Black,
+                        fontSize = 14.sp
                     )
                 }
                 Spacer(modifier= Modifier.height(7.dp))
@@ -113,7 +115,7 @@ fun TaskProgressCard(
                 }
             }
             Box(
-                modifier = Modifier.fillMaxWidth().height(8.dp).clip(CircleShape).background(color = Color.White)
+                modifier = Modifier.fillMaxWidth().height(12.dp).clip(CircleShape).background(color = Color.White)
             ) {
                 Box(
                     modifier = Modifier.fillMaxHeight()

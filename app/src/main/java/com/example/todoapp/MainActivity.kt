@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.todoapp.ui.screen.HomeScreen
 import com.example.todoapp.ui.screen.StartScreen
 import com.example.todoapp.ui.theme.TodoAppTheme
 
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TodoAppTheme {
-                    StartScreen()
+                HomeScreen(name = "Nghiem Viet Toan")
             }
         }
     }
