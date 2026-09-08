@@ -55,18 +55,11 @@ import java.nio.channels.Selector
 fun HomeScreen(
     name: String
 ) {
-    Scaffold(
-        topBar = {
-            HomeTopBar(name = name)
-        },
-        bottomBar = {
-            HomeBottom(
-                selectedIndex = 0,
-            )
-        }
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        innerPadding ->
-        HomeContent(modifier = Modifier.padding(innerPadding))
+        HomeTopBar(name = name)
+        HomeContent(modifier = Modifier)
     }
 }
 

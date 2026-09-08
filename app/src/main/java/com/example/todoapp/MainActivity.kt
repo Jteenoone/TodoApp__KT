@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.todoapp.ui.screen.HomeScreen
+import com.example.todoapp.ui.screen.MainLayout
 import com.example.todoapp.ui.screen.StartScreen
 import com.example.todoapp.ui.theme.TodoAppTheme
 
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
             }
             TodoAppTheme {
                 if (isStart) {
-                    HomeScreen(name = "Nghiem Viet Toan")
+                    MainLayout()
                 }
                 else {
                    StartScreen (
