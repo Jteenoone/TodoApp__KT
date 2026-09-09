@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,12 +56,12 @@ import java.nio.channels.Selector
 fun HomeScreen(
     name: String
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        HomeTopBar(name = name)
-        HomeContent(modifier = Modifier)
-    }
+//    Column(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        HomeTopBar(name = name)
+        HomeContent(modifier = Modifier.fillMaxSize())
+//    }
 }
 
 
@@ -291,76 +292,94 @@ fun HomeContent(modifier: Modifier = Modifier) {
 
     val categorySummaries = CategorySummaries(categories = categories, tasks = tasks)
 
-    Column(
-        modifier = modifier.padding(horizontal = 24.dp)
+    LazyColumn (
+        modifier = modifier,
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp,
+            bottom = 100.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        CardResult(
-            value = 85f,
-            onView = {},
-            modifier = Modifier.fillMaxWidth().height(150.dp)
-        )
-        Spacer(modifier= Modifier.height(12.dp))
-        Row() {
-            Text(
-                text = "In Progress",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                modifier= Modifier.size(20.dp).background(color = Color(0xFFEEE9FF), shape = CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "6",
-                    color = Color(0xFF5F33E1),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
+        item{
+            HomeTopBar(name = "Ngiem Toan")
         }
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(tasks) {
-                    task->
-                val category = categories.find {
-                    category -> category.id == task.categoryId
+        item {
+            CardResult(
+                value = 85f,
+                onView = {},
+                modifier = Modifier.fillMaxWidth().height(150.dp)
+            )
+        }
+        item {
+            Row() {
+                Text(
+                    text = "In Progress",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier.size(20.dp)
+                        .background(color = Color(0xFFEEE9FF), shape = CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "6",
+                        color = Color(0xFF5F33E1),
+                        fontWeight = FontWeight.Medium
+                    )
                 }
-                category?.let {
-                    TaskProgressCard(
-                        task = task,
-                        category = it,
-                        modifier = Modifier.width(200.dp).height(110.dp)
+
+            }
+        }
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(tasks) { task ->
+                    val category = categories.find { category ->
+                        category.id == task.categoryId
+                    }
+                    category?.let {
+                        TaskProgressCard(
+                            task = task,
+                            category = it,
+                            modifier = Modifier.width(200.dp).height(110.dp)
+                        )
+                    }
+                }
+            }
+        }
+//        Spacer(modifier = Modifier.height(12.dp))
+        item {
+            Row() {
+                Text(
+                    text = "Task Groups",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Box(
+                    modifier = Modifier.size(20.dp)
+                        .background(color = Color(0xFFEEE9FF), shape = CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "4",
+                        color = Color(0xFF5F33E1),
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        Row() {
-            Text(
-                text = "Task Groups",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Box(
-                modifier= Modifier.size(20.dp).background(color = Color(0xFFEEE9FF), shape = CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "4",
-                    color = Color(0xFF5F33E1),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-        Spacer(modifier= Modifier.height(12.dp))
+//        Spacer(modifier= Modifier.height(12.dp))
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+//        LazyColumn(
+//            verticalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
             items(categorySummaries) {
                 categorySummary->
                 TaskGroupCard(
@@ -368,7 +387,7 @@ fun HomeContent(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-        }
+//        }
     }
 }
 

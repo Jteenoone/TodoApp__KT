@@ -27,7 +27,7 @@ fun TaskDescriptionInputCard(
     modifier: Modifier = Modifier
 ) {
     Surface (
-        modifier = modifier.height(140.dp),
+        modifier = modifier.height(160.dp),
         shape = RoundedCornerShape(20.dp),
         color = Color.White
     ) {
