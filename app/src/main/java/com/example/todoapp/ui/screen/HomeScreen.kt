@@ -49,6 +49,7 @@ import com.example.todoapp.ui.compose.BottomBarItem
 import com.example.todoapp.ui.compose.CardResult
 import com.example.todoapp.ui.compose.TaskGroupCard
 import com.example.todoapp.ui.compose.TaskProgressCard
+import com.example.todoapp.utils.Background
 import com.example.todoapp.utils.CategorySummaries
 import java.nio.channels.Selector
 
@@ -60,7 +61,7 @@ fun HomeScreen(
 //        modifier = Modifier.fillMaxSize()
 //    ) {
 //        HomeTopBar(name = name)
-        HomeContent(modifier = Modifier.fillMaxSize())
+    HomeContent(modifier = Modifier.fillMaxSize())
 //    }
 }
 

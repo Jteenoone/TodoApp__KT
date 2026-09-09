@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.ui.compose.BottomBarItem
+import com.example.todoapp.utils.Background
 
 @Composable
 fun MainLayout() {
@@ -46,8 +47,10 @@ fun MainLayout() {
         mutableStateOf(false)
     }
     if(showAddTask) {
-        AddTaskScreen(
+        Background(
+        content = {AddTaskScreen(
             onBack = {showAddTask = false}
+        )}
         )
     }
     else {
@@ -62,9 +65,11 @@ fun MainLayout() {
                 )
             }
         ) { innerPadding ->
-            MainContent(
+            Background(
+            content = {MainContent(
                 selectedIndex = selectedIndex,
                 modifier = Modifier.padding(innerPadding)
+            )}
             )
         }
     }
