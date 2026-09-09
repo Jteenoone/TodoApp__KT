@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -22,6 +23,8 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,10 +44,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todoapp.model.Category
+import com.example.todoapp.ui.compose.DateInputCard
 import com.example.todoapp.ui.compose.TaskDescriptionInputCard
 import com.example.todoapp.ui.compose.TaskGroupDropdown
 import com.example.todoapp.ui.compose.TaskNameInputCard
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,6 +166,14 @@ fun AddTaskContent(
         mutableStateOf("")
     }
 
+    var startDate by remember {
+        mutableStateOf(Date())
+    }
+
+    var endDate by remember {
+        mutableStateOf(Date())
+    }
+
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
     ) {
@@ -183,6 +197,36 @@ fun AddTaskContent(
             onChange = {value-> description = value},
             modifier= Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        DateInputCard(
+            title = "Start Date",
+            date = startDate,
+            onChange = {date-> startDate = date},
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier= Modifier.height(12.dp))
+        DateInputCard(
+            title = "End Date",
+            date = endDate,
+            onChange = {date-> endDate = date},
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = {},
+            modifier = Modifier.fillMaxWidth().height(60.dp),
+            shape = RoundedCornerShape(18.dp),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color(0xFF6333E8)
+            )
+        ) {
+            Text(
+                text = "Add Task",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
