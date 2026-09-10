@@ -16,32 +16,31 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.model.Category
+import com.example.todoapp.model.Project
 import com.example.todoapp.model.Task
 import com.example.todoapp.model.TaskCardColors
+import java.time.LocalDate
 
 
 @Composable
-fun TaskProgressCard(
-    task: Task,
+fun ProjectProgressCard(
+    project: Project,
+    progress: Float,
     category: Category,
     modifier: Modifier = Modifier
 ) {
@@ -69,7 +68,7 @@ fun TaskProgressCard(
     )
 
     val taskCardColors = taskCardColorList[
-            task.id.mod(taskCardColorList.size)
+            project.id.mod(taskCardColorList.size)
     ]
     Card(
         modifier = modifier,
@@ -95,7 +94,7 @@ fun TaskProgressCard(
                         fontSize = 12.sp
                     )
                     Text(
-                        text = task.title,
+                        text = project.name,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
                         fontSize = 14.sp
@@ -119,7 +118,7 @@ fun TaskProgressCard(
             ) {
                 Box(
                     modifier = Modifier.fillMaxHeight()
-                        .fillMaxWidth(task.progress.coerceIn(0f, 1f))
+                        .fillMaxWidth(progress.coerceIn(0f, 1f))
                         .clip(CircleShape)
                         .background(color = taskCardColors.progressColor)
                 )
@@ -128,28 +127,31 @@ fun TaskProgressCard(
     }
 }
 
-@Preview(
-    showBackground = true
-)
-@Composable
-fun TaskProgressCardPreview() {
-    val task = Task(
-        id = 1,
-        categoryId = 1,
-        title = "Grocery shopping app design",
-        progress = 0.72f
-    )
-    val category =  Category(
-        id = 1,
-        name = "Office Project",
-        color = Color(0xFFF478B8),
-        backgroundColor = Color(0xFFFFE4F2),
-        icon = Icons.Default.Work
-    )
-
-    TaskProgressCard(
-        task = task,
-        category = category,
-        modifier = Modifier.height(115.dp).width(260.dp)
-    )
-}
+//@Preview(
+//    showBackground = true
+//)
+//@Composable
+//fun TaskProgressCardPreview() {
+//    val task = Task(
+//        id = 1,
+//        name = "Market Research",
+//        title = "Research shopping applications",
+//        progress = 0.85f,
+//        projectId = 1,
+//        startDate = LocalDate.of(2026, 9, 1),
+//        endDate = LocalDate.of(2026, 9, 5)
+//    )
+//    val category =  Category(
+//        id = 1,
+//        name = "Office Project",
+//        color = Color(0xFFF478B8),
+//        backgroundColor = Color(0xFFFFE4F2),
+//        icon = Icons.Default.Work
+//    )
+//
+//    ProjectProgressCard(
+//        progress = ,
+//        category = category,
+//        modifier = Modifier.height(115.dp).width(260.dp)
+//    )
+//}
