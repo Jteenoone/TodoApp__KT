@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.ui.compose.BottomBarItem
@@ -41,24 +43,40 @@ import com.example.todoapp.viewmodel.TodoViewModel
 
 @Composable
 fun MainLayout() {
-    val viewModel: TodoViewModel = viewModel();
+    val viewModel: TodoViewModel = viewModel()
     var selectedIndex by remember {
         mutableIntStateOf(0)
+    }
+
+    var projectDetailId by remember {
+        mutableIntStateOf(-1)
     }
 
     var showAddTask by remember {
         mutableStateOf(false)
     }
-    if(showAddTask) {
-        Background(
-        content = {AddProjectScreen(
-            viewModel=viewModel,
-            onBack = {showAddTask = false}
-        )}
+
+    if(projectDetailId != -1) {
+        Background {
+        ProjectDetailScreen(
+            projectId = projectDetailId,
+            viewModel = viewModel,
+            onBack = { projectDetailId = -1 },
         )
+            }
     }
-    else {
+    else if (showAddTask) {
+        Background{
+                AddProjectScreen(
+                    viewModel = viewModel,
+                    onBack = { showAddTask = false }
+                )
+            }
+    } else {
         Scaffold(
+            containerColor = Color.Transparent,
+            // Khử insets để tránh TopBar bị tụt xuống 2 lần
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 MainBottom(
                     selectedIndex = selectedIndex,
@@ -70,11 +88,15 @@ fun MainLayout() {
             }
         ) { innerPadding ->
             Background(
-            content = {MainContent(
-                selectedIndex = selectedIndex,
-                viewModel= viewModel,
-                modifier = Modifier.padding(innerPadding)
-            )}
+                content = {
+                    MainContent(
+                        selectedIndex = selectedIndex,
+                        viewModel = viewModel,
+                        onClickCardProject = {projectId -> projectDetailId= projectId},
+                        // Truyền padding xuống thay vì dùng Modifier.padding
+                        bottomPadding = innerPadding.calculateBottomPadding()
+                    )
+                }
             )
         }
     }
@@ -84,15 +106,17 @@ fun MainLayout() {
 fun MainContent(
     selectedIndex: Int,
     viewModel: TodoViewModel,
+    bottomPadding: Dp,
+    onClickCardProject: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val name = "Nghiem Toan"
     Box(
-        modifier=modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         when (selectedIndex) {
-            0 -> HomeScreen(name ="Nghiem Toan" , viewModel = viewModel)
-            1 -> CalendarScreen(viewModel = viewModel)
+            // Đảm bảo HomeScreen cũng nhận bottomPadding
+            0 -> HomeScreen(name = "Nghiem Toan", viewModel = viewModel, onClickCardProject = onClickCardProject ,bottomPadding = bottomPadding)
+            1 -> CalendarScreen(viewModel = viewModel, bottomPadding = bottomPadding)
         }
     }
 }
@@ -129,23 +153,23 @@ fun MainBottom(
                 BottomBarItem(
                     icon = Icons.Default.Home,
                     selected = selectedIndex == 0,
-                    onClick = {onClickItem(0)},
+                    onClick = { onClickItem(0) },
                 )
                 BottomBarItem(
                     icon = Icons.Default.CalendarMonth,
                     selected = selectedIndex == 1,
-                    onClick = {onClickItem(1)},
+                    onClick = { onClickItem(1) },
                 )
                 Spacer(Modifier.size(64.dp))
                 BottomBarItem(
                     icon = Icons.AutoMirrored.Filled.Article,
                     selected = selectedIndex == 2,
-                    onClick = {onClickItem(2)},
+                    onClick = { onClickItem(2) },
                 )
                 BottomBarItem(
                     icon = Icons.Default.Group,
                     selected = selectedIndex == 3,
-                    onClick = {onClickItem(3)},
+                    onClick = { onClickItem(3) },
                 )
             }
         }

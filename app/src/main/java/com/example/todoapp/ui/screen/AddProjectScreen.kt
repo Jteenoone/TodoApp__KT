@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.model.Project
+import com.example.todoapp.ui.compose.CommonTopBar
 import com.example.todoapp.ui.compose.DateInputCard
 import com.example.todoapp.ui.compose.TaskDescriptionInputCard
 import com.example.todoapp.ui.compose.TaskGroupDropdown
@@ -52,48 +53,9 @@ fun AddProjectScreen(
     onBack: () -> Unit,
 ) {
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Add Task",
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
-                actions = {
-                    Box (modifier = Modifier.size(48.dp)){
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Thong bao",
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                        Box(
-                            modifier = Modifier.size(6.dp)
-                                .offset(x = (-15).dp, y = 12.dp)
-                                .align(Alignment.TopEnd)
-                                .background(
-                                    color = Color(0xFF5F33E1),
-                                    shape = CircleShape
-                                )
-
-                        )
-                    }
-                }
-            )
+            CommonTopBar(title = "Add Project", onBack = onBack, onNotificationClick = {})
         }
     ) {
         innerPadding -> AddTaskContent(

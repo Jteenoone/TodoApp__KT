@@ -42,6 +42,7 @@ fun ProjectProgressCard(
     project: Project,
     progress: Float,
     category: Category,
+    onClick: ()-> Unit,
     modifier: Modifier = Modifier
 ) {
     val taskCardColorList = listOf(
@@ -73,6 +74,7 @@ fun ProjectProgressCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = taskCardColors.cardColor
         )
