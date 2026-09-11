@@ -172,7 +172,7 @@ fun HomeContent(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "6",
+                        text = viewModel.projects.size.toString(),
                         color = Color(0xFF5F33E1),
                         fontWeight = FontWeight.Medium
                     )
@@ -214,18 +214,13 @@ fun HomeContent(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "4",
+                        text = viewModel.categories.size.toString(),
                         color = Color(0xFF5F33E1),
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
         }
-//        Spacer(modifier= Modifier.height(12.dp))
-
-//        LazyColumn(
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
             items(categorySummaries) {
                 categorySummary->
                 TaskGroupCard(
@@ -233,7 +228,6 @@ fun HomeContent(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-//        }
     }
 }
 

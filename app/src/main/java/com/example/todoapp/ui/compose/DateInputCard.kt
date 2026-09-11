@@ -31,17 +31,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateInputCard(
-    date: Date,
+    date: LocalDate,
     title: String,
-    onChange: (date: Date) -> Unit,
+    onChange: (date: LocalDate) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDatePicker by remember {
@@ -49,7 +49,7 @@ fun DateInputCard(
     }
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = date.time
+        initialSelectedDateMillis = date.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli()
     )
 
     Card(
@@ -103,7 +103,10 @@ fun DateInputCard(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let{ millis ->
-                            onChange(Date(millis))
+                            val selectedDate = java.time.Instant.ofEpochMilli(millis)
+                                .atOffset(java.time.ZoneOffset.UTC)
+                                .toLocalDate()
+                            onChange(selectedDate)
                         }
                         showDatePicker = false
                     }
@@ -126,8 +129,8 @@ fun DateInputCard(
     }
 }
 
-fun formatDate(date: Date): String {
-    val formatter = SimpleDateFormat(
+fun formatDate(date: LocalDate): String {
+    val formatter = DateTimeFormatter.ofPattern(
         "dd MMM, yyyy",
         Locale.ENGLISH
     )

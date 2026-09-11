@@ -1,11 +1,9 @@
 package com.example.todoapp.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,14 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -31,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,16 +36,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.todoapp.model.Category
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.model.Project
 import com.example.todoapp.ui.compose.DateInputCard
 import com.example.todoapp.ui.compose.TaskDescriptionInputCard
 import com.example.todoapp.ui.compose.TaskGroupDropdown
 import com.example.todoapp.ui.compose.TaskNameInputCard
-import java.util.Date
+import com.example.todoapp.viewmodel.TodoViewModel
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskScreen(
+fun AddProjectScreen(
+    viewModel: TodoViewModel,
     onBack: () -> Unit,
 ) {
     Scaffold(
@@ -71,7 +65,7 @@ fun AddTaskScreen(
                         onClick = onBack
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                         )
                     }
@@ -102,63 +96,26 @@ fun AddTaskScreen(
             )
         }
     ) {
-        innerPadding -> AddTaskContent(modifier = Modifier.padding(innerPadding))
+        innerPadding -> AddTaskContent(
+        viewModel = viewModel,
+        onBack= onBack,
+        modifier = Modifier.padding(innerPadding)
+        )
     }
 }
 
 @Composable
 fun AddTaskContent(
+    viewModel: TodoViewModel,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val categories = listOf(
-        Category(
-            id = 1,
-            name = "Office Project",
-            color = Color(0xFFF478B8),
-            backgroundColor = Color(0xFFFFE4F2),
-            icon = Icons.Default.Work
-        ),
-        Category(
-            id = 2,
-            name = "Personal Project",
-            color = Color(0xFF8758F1),
-            backgroundColor = Color(0xFFEDE5FF),
-            icon = Icons.Default.Person
-        ),
-        Category(
-            id = 3,
-            name = "Daily Study",
-            color = Color(0xFFFF8845),
-            backgroundColor = Color(0xFFFFE8D8),
-            icon = Icons.Default.MenuBook
-        ),
-        Category(
-            id = 4,
-            name = "Health & Fitness",
-            color = Color(0xFF41A865),
-            backgroundColor = Color(0xFFDFF5E7),
-            icon = Icons.Default.FitnessCenter
-        ),
-        Category(
-            id = 5,
-            name = "Shopping",
-            color = Color(0xFFFFB300),
-            backgroundColor = Color(0xFFFFF2CC),
-            icon = Icons.Default.ShoppingCart
-        ),
-        Category(
-            id = 6,
-            name = "Home Tasks",
-            color = Color(0xFF2196F3),
-            backgroundColor = Color(0xFFDDEEFF),
-            icon = Icons.Default.Home
-        )
-    )
+    val categories = viewModel.categories
     var selectedCategory by remember {
-        mutableStateOf(categories.first())
+        mutableStateOf(categories.firstOrNull() ?: categories[0])
     }
 
-    var taskName by rememberSaveable {
+    var projectName by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -167,11 +124,11 @@ fun AddTaskContent(
     }
 
     var startDate by remember {
-        mutableStateOf(Date())
+        mutableStateOf(LocalDate.now())
     }
 
     var endDate by remember {
-        mutableStateOf(Date())
+        mutableStateOf(LocalDate.now())
     }
 
     Column(
@@ -187,8 +144,8 @@ fun AddTaskContent(
         )
         Spacer(modifier= Modifier.height(12.dp))
         TaskNameInputCard(
-            taskName=taskName,
-            onChange = {name-> taskName = name},
+            taskName=projectName,
+            onChange = {name-> projectName = name},
             modifier= Modifier.fillMaxWidth()
         )
         Spacer(modifier=Modifier.height(12.dp))
@@ -213,16 +170,28 @@ fun AddTaskContent(
         )
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            onClick = {},
+            onClick = {
+                viewModel.addProject(
+                    Project(
+                        id = viewModel.projects.size + 1,
+                        name = projectName,
+                        description = description,
+                        categoryId = selectedCategory.id,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
+                )
+                onBack()
+            },
             modifier = Modifier.fillMaxWidth().height(60.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(
-                contentColor = Color(0xFF6333E8)
+                containerColor = Color(0xFF6333E8),
+                contentColor = Color.White
             )
         ) {
             Text(
-                text = "Add Task",
-                color = Color.White,
+                text = "Add Project",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -238,5 +207,9 @@ fun AddTaskContent(
 
 @Composable
 fun AddTaskScreenPreview() {
-    AddTaskScreen(onBack = {})
+    val viewModel: TodoViewModel = viewModel()
+    AddProjectScreen(
+        viewModel = viewModel,
+        onBack = {}
+    )
 }

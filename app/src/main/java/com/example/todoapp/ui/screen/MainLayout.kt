@@ -51,7 +51,8 @@ fun MainLayout() {
     }
     if(showAddTask) {
         Background(
-        content = {AddTaskScreen(
+        content = {AddProjectScreen(
+            viewModel=viewModel,
             onBack = {showAddTask = false}
         )}
         )
