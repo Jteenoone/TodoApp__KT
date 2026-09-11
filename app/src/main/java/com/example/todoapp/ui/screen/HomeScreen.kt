@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.R
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Project
@@ -52,17 +53,22 @@ import com.example.todoapp.ui.compose.ProjectProgressCard
 import com.example.todoapp.ui.compose.TaskGroupCard
 import com.example.todoapp.utils.CategorySummaries
 import com.example.todoapp.utils.calculateProjectProgress
+import com.example.todoapp.viewmodel.TodoViewModel
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun HomeScreen(
-    name: String
+    name: String,
+    viewModel: TodoViewModel,
 ) {
 //    Column(
 //        modifier = Modifier.fillMaxSize()
 //    ) {
 //        HomeTopBar(name = name)
-    HomeContent(modifier = Modifier.fillMaxSize())
+    HomeContent( viewModel = viewModel,
+        modifier = Modifier.fillMaxSize()
+    )
 //    }
 }
 
@@ -124,193 +130,13 @@ fun HomeTopBar(
 }
 
 @Composable
-fun HomeContent(modifier: Modifier = Modifier) {
-    val categories = listOf(
-        Category(
-            id = 1,
-            name = "Office Project",
-            color = Color(0xFFF478B8),
-            backgroundColor = Color(0xFFFFE4F2),
-            icon = Icons.Default.Work
-        ),
-        Category(
-            id = 2,
-            name = "Personal Project",
-            color = Color(0xFF5F33E1),
-            backgroundColor = Color(0xFFEDE7FF),
-            icon = Icons.Default.Person
-        ),
-        Category(
-            id = 3,
-            name = "Study Project",
-            color = Color(0xFF4CAF50),
-            backgroundColor = Color(0xFFE4F7E7),
-            icon = Icons.Default.School
-        ),
-        Category(
-            id = 4,
-            name = "Health Project",
-            color = Color(0xFFFF9800),
-            backgroundColor = Color(0xFFFFF1DD),
-            icon = Icons.Default.FitnessCenter
-        )
-    )
-
-    val projects = listOf(
-        Project(
-            id = 1,
-            name = "Shopping Application",
-            categoryId = 1,
-            description = "Design and develop a mobile shopping application",
-            startDate = LocalDate.of(2026, 9, 1),
-            endDate = LocalDate.of(2026, 10, 15)
-        ),
-        Project(
-            id = 2,
-            name = "Portfolio Website",
-            categoryId = 2,
-            description = "Create a personal portfolio website",
-            startDate = LocalDate.of(2026, 9, 5),
-            endDate = LocalDate.of(2026, 9, 30)
-        ),
-        Project(
-            id = 3,
-            name = "Android Course",
-            categoryId = 3,
-            description = "Complete the Jetpack Compose learning course",
-            startDate = LocalDate.of(2026, 9, 2),
-            endDate = LocalDate.of(2026, 11, 30)
-        ),
-        Project(
-            id = 4,
-            name = "Daily Workout",
-            categoryId = 4,
-            description = "Build and maintain a daily exercise routine",
-            startDate = LocalDate.of(2026, 9, 10),
-            endDate = LocalDate.of(2026, 12, 31)
-        )
-    )
-
-    val tasks = listOf(
-        // Shopping Application - projectId = 1
-        Task(
-            id = 1,
-            name = "Market Research",
-            title = "Research shopping applications",
-            progress = 0.85f,
-            projectId = 1,
-            startDate = LocalDate.of(2026, 9, 1),
-            endDate = LocalDate.of(2026, 9, 5)
-        ),
-        Task(
-            id = 2,
-            name = "UI Design",
-            title = "Design shopping application",
-            progress = 0.65f,
-            projectId = 1,
-            startDate = LocalDate.of(2026, 9, 6),
-            endDate = LocalDate.of(2026, 9, 15)
-        ),
-        Task(
-            id = 3,
-            name = "Product Screen",
-            title = "Create product list screen",
-            progress = 0.40f,
-            projectId = 1,
-            startDate = LocalDate.of(2026, 9, 16),
-            endDate = LocalDate.of(2026, 9, 25)
-        ),
-        Task(
-            id = 4,
-            name = "Shopping Cart",
-            title = "Implement shopping cart feature",
-            progress = 0.15f,
-            projectId = 1,
-            startDate = LocalDate.of(2026, 9, 26),
-            endDate = LocalDate.of(2026, 10, 5)
-        ),
-
-        // Portfolio Website - projectId = 2
-        Task(
-            id = 5,
-            name = "Wireframe",
-            title = "Create portfolio website wireframe",
-            progress = 1f,
-            projectId = 2,
-            startDate = LocalDate.of(2026, 9, 5),
-            endDate = LocalDate.of(2026, 9, 8)
-        ),
-        Task(
-            id = 6,
-            name = "Home Page",
-            title = "Develop portfolio home page",
-            progress = 0.75f,
-            projectId = 2,
-            startDate = LocalDate.of(2026, 9, 9),
-            endDate = LocalDate.of(2026, 9, 18)
-        ),
-        Task(
-            id = 7,
-            name = "Project Page",
-            title = "Add personal projects to portfolio",
-            progress = 0.30f,
-            projectId = 2,
-            startDate = LocalDate.of(2026, 9, 19),
-            endDate = LocalDate.of(2026, 9, 30)
-        ),
-
-        // Android Course - projectId = 3
-        Task(
-            id = 8,
-            name = "Kotlin Basics",
-            title = "Complete Kotlin fundamentals",
-            progress = 1f,
-            projectId = 3,
-            startDate = LocalDate.of(2026, 9, 2),
-            endDate = LocalDate.of(2026, 9, 10)
-        ),
-        Task(
-            id = 9,
-            name = "Compose Layout",
-            title = "Learn Row, Column and Box",
-            progress = 0.80f,
-            projectId = 3,
-            startDate = LocalDate.of(2026, 9, 11),
-            endDate = LocalDate.of(2026, 9, 20)
-        ),
-        Task(
-            id = 10,
-            name = "ViewModel",
-            title = "Learn state management with ViewModel",
-            progress = 0.45f,
-            projectId = 3,
-            startDate = LocalDate.of(2026, 9, 21),
-            endDate = LocalDate.of(2026, 10, 5)
-        ),
-
-        // Daily Workout - projectId = 4
-        Task(
-            id = 11,
-            name = "Workout Plan",
-            title = "Create weekly workout schedule",
-            progress = 0.90f,
-            projectId = 4,
-            startDate = LocalDate.of(2026, 9, 10),
-            endDate = LocalDate.of(2026, 9, 12)
-        ),
-        Task(
-            id = 12,
-            name = "Morning Exercise",
-            title = "Exercise for 30 minutes every morning",
-            progress = 0.50f,
-            projectId = 4,
-            startDate = LocalDate.of(2026, 9, 13),
-            endDate = LocalDate.of(2026, 12, 31)
-        )
-    )
-
+fun HomeContent(
+    viewModel: TodoViewModel,
+    modifier: Modifier = Modifier) {
+    val tasks = viewModel.tasks
+    val categories = viewModel.categories
+    val projects = viewModel.projects
     val categorySummaries = CategorySummaries(categories = categories,projects=projects, tasks = tasks)
-
     LazyColumn (
         modifier = modifier,
         contentPadding = PaddingValues(
@@ -487,6 +313,9 @@ fun HomeBottom(
 )
 @Composable
 fun  HomeScreenPreview() {
-    HomeScreen(name = "Nghiem Viet Duc Toan")
+    val viewModel: TodoViewModel = viewModel()
+    HomeScreen( viewModel=viewModel,
+        name = "Nghiem Viet Duc Toan"
+    )
 }
 

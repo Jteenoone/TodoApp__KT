@@ -34,11 +34,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.ui.compose.BottomBarItem
 import com.example.todoapp.utils.Background
+import com.example.todoapp.viewmodel.TodoViewModel
 
 @Composable
 fun MainLayout() {
+    val viewModel: TodoViewModel = viewModel();
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
@@ -68,6 +71,7 @@ fun MainLayout() {
             Background(
             content = {MainContent(
                 selectedIndex = selectedIndex,
+                viewModel= viewModel,
                 modifier = Modifier.padding(innerPadding)
             )}
             )
@@ -78,6 +82,7 @@ fun MainLayout() {
 @Composable
 fun MainContent(
     selectedIndex: Int,
+    viewModel: TodoViewModel,
     modifier: Modifier = Modifier
 ) {
     val name = "Nghiem Toan"
@@ -85,8 +90,8 @@ fun MainContent(
         modifier=modifier.fillMaxSize()
     ) {
         when (selectedIndex) {
-            0 -> HomeScreen(name = name)
-            1 -> CalendarScreen()
+            0 -> HomeScreen(name ="Nghiem Toan" , viewModel = viewModel)
+            1 -> CalendarScreen(viewModel = viewModel)
         }
     }
 }

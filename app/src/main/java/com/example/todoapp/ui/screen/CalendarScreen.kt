@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,13 +31,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.todoapp.model.Category
+import com.example.todoapp.model.Project
 import com.example.todoapp.ui.compose.AreaListDateCard
+import com.example.todoapp.ui.compose.TaskDetailCard
+import com.example.todoapp.viewmodel.TodoViewModel
 import java.time.LocalDate
 
 @Composable
-fun CalendarScreen() {
+fun CalendarScreen(
+    viewModel: TodoViewModel,
+) {
+    var selectedDate by remember {
+        mutableStateOf(LocalDate.now())
+    }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
             modifier = Modifier.height(70.dp).fillMaxWidth().padding(horizontal = 12.dp),
@@ -77,14 +89,25 @@ fun CalendarScreen() {
                 )
             }
         }
-        var selectedDate by remember {
-            mutableStateOf(LocalDate.now())
-        }
 
         AreaListDateCard(
             selectedDate = selectedDate,
             onDateSelected = {date -> selectedDate = date},
             modifier = Modifier.height(100.dp)
         )
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(viewModel.getTaskByDate(selectedDate)) {item->
+                val project: Project? = viewModel.getProjectById(item.projectId)
+                val category : Category? = viewModel.getCategoryById(project?.categoryId ?: 0)
+                if(category == null || project == null) return@items
+                TaskDetailCard(
+                    task =  item,
+                    category = category,
+                    project=project
+                )
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.example.todoapp.model
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 data class Task(
@@ -9,8 +9,8 @@ data class Task(
     val title: String,
     val progress: Float,
     val projectId: Int,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime,
 ) {
     val status = when{
         progress <= 0f -> "To Do"

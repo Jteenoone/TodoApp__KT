@@ -33,6 +33,7 @@ import com.example.todoapp.model.Category
 import com.example.todoapp.model.Project
 import com.example.todoapp.model.Task
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun TaskDetailCard(
@@ -138,8 +139,8 @@ fun TaskDetailCardPreview() {
         title = "Research shopping applications",
         progress = 0.85f,
         projectId = 1,
-        startDate = LocalDate.of(2026, 9, 1),
-        endDate = LocalDate.of(2026, 9, 5)
+        startDate = LocalDateTime.of(2026, 9, 1, 12, 30),
+        endDate = LocalDateTime.of(2026, 9, 5, 14, 0)
     )
     val category =  Category(
         id = 1,

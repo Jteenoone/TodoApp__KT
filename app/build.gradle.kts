@@ -59,5 +59,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
