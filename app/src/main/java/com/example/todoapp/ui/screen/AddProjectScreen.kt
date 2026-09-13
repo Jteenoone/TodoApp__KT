@@ -168,7 +168,7 @@ fun AddTaskContent(
 )
 
 @Composable
-fun AddTaskScreenPreview() {
+fun AddProjectScreenPreview() {
     val viewModel: TodoViewModel = viewModel()
     AddProjectScreen(
         viewModel = viewModel,

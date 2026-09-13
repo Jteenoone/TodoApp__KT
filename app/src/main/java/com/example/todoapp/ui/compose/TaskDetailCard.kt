@@ -69,7 +69,7 @@ fun TaskDetailCard(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                   text = task.title,
+                   text = task.name,
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
