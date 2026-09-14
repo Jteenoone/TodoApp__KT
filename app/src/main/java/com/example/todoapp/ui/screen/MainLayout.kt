@@ -42,37 +42,16 @@ import com.example.todoapp.utils.Background
 import com.example.todoapp.viewmodel.TodoViewModel
 
 @Composable
-fun MainLayout() {
-    val viewModel: TodoViewModel = viewModel()
+fun MainLayout(
+    viewModel: TodoViewModel,
+    onClickCardProject: (Int) -> Unit,
+    onAddItem: () -> Unit
+) {
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
 
-    var projectDetailId by remember {
-        mutableIntStateOf(-1)
-    }
 
-    var showAddTask by remember {
-        mutableStateOf(false)
-    }
-
-    if(projectDetailId != -1) {
-        Background {
-        ProjectDetailScreen(
-            projectId = projectDetailId,
-            viewModel = viewModel,
-            onBack = { projectDetailId = -1 },
-        )
-            }
-    }
-    else if (showAddTask) {
-        Background{
-                AddProjectScreen(
-                    viewModel = viewModel,
-                    onBack = { showAddTask = false }
-                )
-            }
-    } else {
         Scaffold(
             containerColor = Color.Transparent,
             // Khử insets để tránh TopBar bị tụt xuống 2 lần
@@ -80,7 +59,7 @@ fun MainLayout() {
             bottomBar = {
                 MainBottom(
                     selectedIndex = selectedIndex,
-                    onAddItem = { showAddTask = true },
+                    onAddItem = onAddItem,
                     onClickItem = { index ->
                         selectedIndex = index
                     }
@@ -92,14 +71,13 @@ fun MainLayout() {
                     MainContent(
                         selectedIndex = selectedIndex,
                         viewModel = viewModel,
-                        onClickCardProject = {projectId -> projectDetailId= projectId},
+                        onClickCardProject = onClickCardProject,
                         // Truyền padding xuống thay vì dùng Modifier.padding
                         bottomPadding = innerPadding.calculateBottomPadding()
                     )
                 }
             )
         }
-    }
 }
 
 @Composable

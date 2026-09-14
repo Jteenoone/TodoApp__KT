@@ -153,7 +153,7 @@ fun AddTaskContent(
             )
         ) {
             Text(
-                text = "Add Project",
+                text = "Create Project",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

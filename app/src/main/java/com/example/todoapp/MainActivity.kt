@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.todoapp.navigation.AppNavigation
 import com.example.todoapp.ui.screen.HomeScreen
 import com.example.todoapp.ui.screen.MainLayout
 import com.example.todoapp.ui.screen.StartScreen
@@ -26,20 +27,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var isStart by remember {
-                mutableStateOf(false)
-            }
             TodoAppTheme {
-                if (isStart) {
-                    MainLayout()
-                }
-                else {
-                   StartScreen (
-                        onStart={
-                           isStart = true
-                   }
-                   )
-                }
+                AppNavigation()
             }
         }
     }
