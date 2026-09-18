@@ -19,12 +19,12 @@ fun CategorySummaries(
             task.projectId == categoryProject?.id
         }
 
-        val progress = (category.id *17).toFloat()
+        val progress = categoryTask.sumOf{ task -> task.progress.toDouble() }
 
         CategorySummary(
             category = category,
             taskCount = categoryTask.size,
-            progress = progress
+            progress = if(categoryTask.isEmpty()) 0f else ((progress / categoryTask.size)*100).toFloat()
         )
     }
 }

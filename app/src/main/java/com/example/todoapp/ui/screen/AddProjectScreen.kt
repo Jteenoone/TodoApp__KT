@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.data.FakeTodoRepository
+import com.example.todoapp.model.AddProjectFormState
 import com.example.todoapp.model.Project
+import com.example.todoapp.model.Task
 import com.example.todoapp.ui.compose.CommonTopBar
 import com.example.todoapp.ui.compose.DateInputCard
 import com.example.todoapp.ui.compose.TaskDescriptionInputCard
@@ -51,105 +56,124 @@ import java.time.LocalDate
 fun AddProjectScreen(
     viewModel: TodoViewModel,
     onBack: () -> Unit,
+    onNotificationClick: () -> Unit = {},
+    onDone: (Int) -> Unit = {}
 ) {
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            CommonTopBar(title = "Add Project", onBack = onBack, onNotificationClick = {})
+            CommonTopBar(title = "Add Project", onBack = onBack, onNotificationClick = onNotificationClick)
         }
     ) {
-        innerPadding -> AddTaskContent(
+        innerPadding -> AddProjectContent(
         viewModel = viewModel,
-        onBack= onBack,
+        onDone = onDone,
         modifier = Modifier.padding(innerPadding)
         )
     }
 }
 
 @Composable
-fun AddTaskContent(
+fun AddProjectContent(
     viewModel: TodoViewModel,
-    onBack: () -> Unit,
+    onDone: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val categories = viewModel.categories
-    var selectedCategory by remember {
-        mutableStateOf(categories.firstOrNull() ?: categories[0])
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val categories = uiState.categories
+    var formState by remember {
+        mutableStateOf(
+            AddProjectFormState(categoryId = categories.firstOrNull()?.id ?: 0)
+        )
     }
-
-    var projectName by rememberSaveable {
+    var isNameTouched by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var nameError by rememberSaveable {
         mutableStateOf("")
     }
 
-    var description by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var startDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-
-    var endDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
+    val canCreate: Boolean = formState.categoryId != 0 &&
+            formState.name.isNotBlank() &&
+            (formState.endDate.isAfter(formState.startDate)
+                    ||formState.endDate.isEqual(formState.startDate))
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
     ) {
         TaskGroupDropdown(
             categories=categories,
-             selectedGroup = selectedCategory,
-            onClick = {category->
-                selectedCategory = category
+             categoryId = formState.categoryId,
+            onClick = {categoryId->
+                formState = formState.copy(categoryId = categoryId)
             },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier= Modifier.height(12.dp))
         TaskNameInputCard(
-            taskName=projectName,
-            onChange = {name-> projectName = name},
+            taskName=formState.name,
+            onChange = {
+                name->
+                formState = formState.copy(name = name)
+                isNameTouched = true
+                if(name.isBlank()) nameError = "Tên không được để trống"
+                else nameError = ""
+                       },
             modifier= Modifier.fillMaxWidth()
         )
+        if(nameError != "" && isNameTouched) {
+            Text(
+                text = nameError,
+                color = Color.Red
+            )
+        }
         Spacer(modifier=Modifier.height(12.dp))
         TaskDescriptionInputCard(
-            description = description,
-            onChange = {value-> description = value},
+            description = formState.description,
+            onChange = {value-> formState = formState.copy(description = value)},
             modifier= Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
         DateInputCard(
             title = "Start Date",
-            date = startDate,
-            onChange = {date-> startDate = date},
+            date = formState.startDate,
+            onChange = {date-> formState = formState.copy(startDate = date)},
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier= Modifier.height(12.dp))
         DateInputCard(
             title = "End Date",
-            date = endDate,
-            onChange = {date-> endDate = date},
+            date = formState.endDate,
+            onChange = {date-> formState = formState.copy(endDate =  date)},
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.weight(1f))
         Button(
+            enabled = canCreate,
             onClick = {
-                viewModel.addProject(
-                    Project(
-                        id = viewModel.projects.size + 1,
-                        name = projectName,
-                        description = description,
-                        categoryId = selectedCategory.id,
-                        startDate = startDate,
-                        endDate = endDate
-                    )
-                )
-                onBack()
+                if(canCreate) {
+                        val project: Project = viewModel.createProject (
+                            name = formState.name,
+                            description = formState.description,
+                            categoryId = formState.categoryId,
+                            startDate = formState.startDate,
+                            endDate = formState.endDate
+                        )
+                        viewModel.addProject(
+                            project = project
+                        )
+                        onDone(project.id)
+                    } else {
+                        if(formState.name.isBlank()) {
+                            nameError = "Tên không được để trống"
+                        }
+                    }
             },
             modifier = Modifier.fillMaxWidth().height(60.dp),
             shape = RoundedCornerShape(18.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF6333E8),
-                contentColor = Color.White
+                contentColor = if(canCreate)  Color.White else Color.Gray
             )
         ) {
             Text(
@@ -162,6 +186,7 @@ fun AddTaskContent(
 }
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -169,7 +194,9 @@ fun AddTaskContent(
 
 @Composable
 fun AddProjectScreenPreview() {
-    val viewModel: TodoViewModel = viewModel()
+    val viewModel = TodoViewModel(
+        repository = FakeTodoRepository()
+    )
     AddProjectScreen(
         viewModel = viewModel,
         onBack = {}

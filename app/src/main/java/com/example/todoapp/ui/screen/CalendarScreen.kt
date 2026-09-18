@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Project
 import com.example.todoapp.ui.compose.AreaListDateCard
@@ -27,15 +28,15 @@ import com.example.todoapp.ui.compose.CommonTopBar
 import com.example.todoapp.ui.compose.TaskDetailCard
 import com.example.todoapp.viewmodel.TodoViewModel
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun CalendarScreen(
     viewModel: TodoViewModel,
     bottomPadding: Dp = 0.dp
 ) {
-    var selectedDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedDate = uiState.value.selectedDate
     
     Scaffold(
         containerColor = Color.Transparent,
@@ -56,7 +57,7 @@ fun CalendarScreen(
             // Date Picker Area
             AreaListDateCard(
                 selectedDate = selectedDate,
-                onDateSelected = { date -> selectedDate = date },
+                onDateSelected = { date -> viewModel.updateDate(date) },
                 modifier = Modifier.height(110.dp).fillMaxWidth()
             )
 
@@ -72,16 +73,21 @@ fun CalendarScreen(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val dailyTasks = viewModel.getTaskByDate(selectedDate)
+                val startDate = selectedDate.atStartOfDay()
+                val endDate = selectedDate.atTime(LocalTime.MAX)
+                val dailyTasks = uiState.value.tasks.filter { it.startDate in startDate..endDate }
                 items(dailyTasks) { item ->
-                    val project: Project? = viewModel.getProjectById(item.projectId)
-                    val category: Category? = viewModel.getCategoryById(project?.categoryId ?: 0)
+                    val project: Project? = uiState.value.projects.find {
+                        it.id == item.projectId
+                    }
+                    val category: Category? = uiState.value.categories.find{it.id == (project?.categoryId ?: 0)}
 
                     if (category != null && project != null) {
                         TaskDetailCard(
                             task = item,
                             category = category,
-                            project = project
+                            project = project,
+                            onUpdateProgress = { taskId, progress -> viewModel.updateTaskProgress(taskId, progress) }
                         )
                     }
                 }

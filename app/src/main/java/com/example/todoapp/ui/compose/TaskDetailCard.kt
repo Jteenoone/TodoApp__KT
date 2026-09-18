@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,9 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastCoerceAtMost
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Project
 import com.example.todoapp.model.Task
+import com.example.todoapp.model.color
+import com.example.todoapp.model.label
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,14 +44,10 @@ fun TaskDetailCard(
     task: Task,
     category: Category,
     project: Project,
+    onUpdateProgress: (Int, Float) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier
 ) {
-    val color = when(task.status) {
-        "To Do" -> Color(0xFF0087FF)
-        "In Progress" -> Color(0xFFFF7D53)
-        "Done" -> Color(0xFF5F33E1)
-        else -> Color.LightGray
-    }
+    val color = task.status.color()
 
     // Định dạng thời gian: hh:mm a sẽ cho ra "10:00 AM" hoặc "01:30 PM"
     val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
@@ -116,13 +116,15 @@ fun TaskDetailCard(
                         tint = category.color
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .background(color = color.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
+                Card(
+                    onClick = {onUpdateProgress(task.id, (task.progress + 0.5f).coerceAtMost(1f))},
+                    colors = CardDefaults.cardColors(
+                        containerColor = color.copy(alpha = 0.2f)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = task.status,
+                        text = task.status.label(),
                         color = color,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)

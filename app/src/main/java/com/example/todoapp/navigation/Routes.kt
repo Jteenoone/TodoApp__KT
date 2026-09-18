@@ -8,6 +8,6 @@ object Routes {
     const val ADD_TASK = "add_task/{projectId}"
     const val PROJECT_DETAIL = "project_detail/{projectId}"
 
-    fun addTask(projectId: Int): String = "add_task/ $projectId"
-    fun projectDetail(projectId: Int): String = "project_detail/ $projectId"
+    fun addTask(projectId: Int): String = "add_task/$projectId"
+    fun projectDetail(projectId: Int): String = "project_detail/$projectId"
 }

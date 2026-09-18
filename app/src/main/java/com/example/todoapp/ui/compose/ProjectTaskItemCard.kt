@@ -32,6 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.model.Task
+import com.example.todoapp.model.TaskStatus
+import com.example.todoapp.model.backgroundColor
+import com.example.todoapp.model.color
+import com.example.todoapp.model.label
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -41,19 +45,6 @@ fun ProjectTaskItemCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val statusColor = when (task.status) {
-        "To Do" -> Color(0xFF0087FF)
-        "In Progress" -> Color(0xFFFF7D53)
-        "Completed" -> Color(0xFF5F33E1)
-        else -> Color(0xFF757575)
-    }
-
-    val statusBgColor = when (task.status) {
-        "To Do" -> Color(0xFFE7F3FF)
-        "In Progress" -> Color(0xFFFFEFE9)
-        "Completed" -> Color(0xFFEDE7FF)
-        else -> Color(0xFFF0F0F0)
-    }
 
     val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
     val startTime = task.startDate.format(timeFormatter)
@@ -87,21 +78,21 @@ fun ProjectTaskItemCard(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .background(color = statusBgColor, shape = CircleShape),
+                        .background(color = task.status.backgroundColor(), shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (task.status == "Completed") {
+                    if (task.status == TaskStatus.COMPLETED) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Completed",
-                            tint = statusColor,
+                            tint = task.status.color(),
                             modifier = Modifier.size(20.dp)
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Default.Pending,
-                            contentDescription = task.status,
-                            tint = statusColor,
+                            contentDescription = task.status.label(),
+                            tint = task.status.color(),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -133,13 +124,13 @@ fun ProjectTaskItemCard(
                 // Status badge
                 Box(
                     modifier = Modifier
-                        .background(color = statusBgColor, shape = RoundedCornerShape(10.dp))
+                        .background(color = task.status.backgroundColor(), shape = RoundedCornerShape(10.dp))
                         .padding(horizontal = 10.dp, vertical = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = task.status,
-                        color = statusColor,
+                        text = task.status.label(),
+                        color = task.status.color(),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -211,7 +202,7 @@ fun ProjectTaskItemCard(
                             .fillMaxWidth(task.progress.coerceIn(0f, 1f))
                             .height(6.dp)
                             .clip(CircleShape)
-                            .background(color = statusColor)
+                            .background(color = task.status.color())
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -219,7 +210,7 @@ fun ProjectTaskItemCard(
                     text = "${(task.progress * 100).toInt()}%",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = statusColor
+                    color = task.status.color()
                 )
             }
         }

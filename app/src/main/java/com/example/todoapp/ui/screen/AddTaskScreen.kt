@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todoapp.data.FakeTodoRepository
+import com.example.todoapp.model.AddTaskFormState
 import com.example.todoapp.model.Task
 import com.example.todoapp.ui.compose.CommonTopBar
 import com.example.todoapp.ui.compose.DateInputCard
@@ -64,25 +67,36 @@ fun AddTaskContent(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var title by rememberSaveable { mutableStateOf("") }
+    var formState by remember {
+        mutableStateOf(AddTaskFormState())
+    }
+    var isNameTouched by rememberSaveable { mutableStateOf(false) }
+    var nameError by rememberSaveable {mutableStateOf("")}
 
-    // Dùng remember cho LocalDateTime (vì rememberSaveable cần Saver cho kiểu dữ liệu này)
-    var startDate by remember { mutableStateOf(LocalDateTime.now()) }
-    var endDate by remember { mutableStateOf(LocalDateTime.now().plusHours(1)) }
+    val canCreate = formState.name.isNotBlank() && formState.endDate.isAfter(formState.startDate)
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp)
     ) {
         TaskNameInputCard(
-            taskName = name,
-            onChange = { name = it },
+            taskName = formState.name,
+            onChange = {
+                formState = formState.copy(name =it)
+                isNameTouched = true
+                if(it.isBlank()) nameError = "Tên không được để trống"
+                else nameError = ""
+                       },
             modifier = Modifier.fillMaxWidth()
+        )
+        if(nameError != "" && isNameTouched)
+            Text(
+            text = nameError,
+            color = Color.Red
         )
         Spacer(modifier = Modifier.height(12.dp))
         TaskDescriptionInputCard(
-            description = title,
-            onChange = { title = it },
+            description = formState.title,
+            onChange = { formState = formState.copy(title = it) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -90,15 +104,15 @@ fun AddTaskContent(
         // CHỌN NGÀY VÀ GIỜ BẮT ĐẦU
         DateInputCard(
             title = "Start Date",
-            date = startDate.toLocalDate(),
-            onChange = { startDate = LocalDateTime.of(it, startDate.toLocalTime()) },
+            date = formState.startDate.toLocalDate(),
+            onChange = { formState =formState.copy(startDate =  LocalDateTime.of(it, formState.startDate.toLocalTime())) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
         TimeInputCard(
             title = "Start Time",
-            time = startDate.toLocalTime(),
-            onChange = { startDate = LocalDateTime.of(startDate.toLocalDate(), it) },
+            time = formState.startDate.toLocalTime(),
+            onChange = { formState = formState.copy(startDate= LocalDateTime.of(formState.startDate.toLocalDate(), it)) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -106,35 +120,37 @@ fun AddTaskContent(
         // CHỌN NGÀY VÀ GIỜ KẾT THÚC
         DateInputCard(
             title = "End Date",
-            date = endDate.toLocalDate(),
-            onChange = { endDate = LocalDateTime.of(it, endDate.toLocalTime()) },
+            date = formState.endDate.toLocalDate(),
+            onChange = { formState = formState.copy(endDate = LocalDateTime.of(it, formState.endDate.toLocalTime())) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
         TimeInputCard(
             title = "End Time",
-            time = endDate.toLocalTime(),
-            onChange = { endDate = LocalDateTime.of(endDate.toLocalDate(), it) },
+            time = formState.endDate.toLocalTime(),
+            onChange = { formState = formState.copy(endDate = LocalDateTime.of(formState.endDate.toLocalDate(), it)) },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
+            enabled = canCreate,
             onClick = {
-                if (name.isNotBlank()) {
+                if(canCreate) {
+                    val task: Task = viewModel.createTask(
+                        name = formState.name,
+                        title = formState.title,
+                        projectId = projectId,
+                        startDate = formState.startDate,
+                        endDate = formState.endDate
+                    )
                     viewModel.addTask(
-                        Task(
-                            id = viewModel.tasks.size + 1,
-                            name = name,
-                            title = title,
-                            startDate = startDate,
-                            endDate = endDate,
-                            progress = 0f,
-                            projectId = projectId
-                        )
+                        task = task
                     )
                     onBack() // Quay lại sau khi thêm
+                } else {
+                    if(formState.name.isBlank()) nameError = "Tên không được để trống"
                 }
             },
             modifier = Modifier.fillMaxWidth().height(60.dp),
@@ -145,7 +161,7 @@ fun AddTaskContent(
         ) {
             Text(
                 text = "Create Task",
-                color = Color.White,
+                color = if(canCreate) Color.White else Color.Gray,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -153,13 +169,16 @@ fun AddTaskContent(
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(
     showBackground = true,
     showSystemUi = true
 )
 @Composable
 fun AddTaskScreenPreview() {
-    val viewModel: TodoViewModel = viewModel()
+    val viewModel = TodoViewModel(
+        repository = FakeTodoRepository()
+    )
     AddTaskScreen(
         viewModel = viewModel,
         onBack = {},

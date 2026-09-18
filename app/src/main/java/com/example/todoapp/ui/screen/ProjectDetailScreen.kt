@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.model.Task
 import com.example.todoapp.ui.compose.CommonTopBar
@@ -110,9 +111,10 @@ fun ProjectDetailContent(
     onAddTask: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val project = viewModel.getProjectById(projectId)
-    val category = project?.let { viewModel.getCategoryById(it.categoryId) }
-    val tasks = viewModel.getTasksByProject(projectId)
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val project = uiState.value.projects.find { it.id == projectId }
+    val category = project?.let { uiState.value.categories.find { category -> category.id == it.categoryId } }
+    val tasks = uiState.value.tasks.filter { it.projectId == projectId }
 
     // Sắp xếp các task theo ngày bắt đầu (startDate tăng dần)
     val sortedTasks = remember(tasks) {

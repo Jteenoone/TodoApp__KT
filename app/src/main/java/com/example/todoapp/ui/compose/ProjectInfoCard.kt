@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.model.Category
 import com.example.todoapp.model.Project
+import com.example.todoapp.model.TaskStatus
 import com.example.todoapp.model.Task
 import com.example.todoapp.utils.calculateProjectProgress
 import java.time.LocalDate
@@ -46,9 +47,9 @@ fun ProjectInfoCard(
 ) {
     val progress = calculateProjectProgress(project.id, tasks)
     val totalTasks = tasks.size
-    val completedCount = tasks.count { it.status == "Completed" }
-    val inProgressCount = tasks.count { it.status == "In Progress" }
-    val todoCount = tasks.count { it.status == "To Do" }
+    val completedCount = tasks.count { it.status == TaskStatus.COMPLETED }
+    val inProgressCount = tasks.count { it.status == TaskStatus.IN_PROGRESS }
+    val todoCount = tasks.count { it.status == TaskStatus.TODO }
 
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val startDateStr = project.startDate.format(dateFormatter)

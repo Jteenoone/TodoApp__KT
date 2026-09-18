@@ -39,14 +39,14 @@ import com.example.todoapp.model.Category
 @Composable
 fun TaskGroupDropdown(
     categories: List<Category>,
-    selectedGroup: Category,
-    onClick: (category: Category) -> Unit,
+    categoryId: Int,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
-
+    val selectedGroup = categories.find { it.id == categoryId } ?: categories.first()
 
     Box(
         modifier = modifier
@@ -117,7 +117,7 @@ fun TaskGroupDropdown(
                         Text(category.name)
                     },
                     onClick={
-                        onClick(category)
+                        onClick(category.id)
                         expanded = false
                     },
                     leadingIcon = {

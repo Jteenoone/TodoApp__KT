@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.R
 import com.example.todoapp.ui.compose.CardResult
@@ -93,9 +95,10 @@ fun HomeContent(
     onClickCardProject: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tasks = viewModel.tasks
-    val categories = viewModel.categories
-    val projects = viewModel.projects
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val tasks = uiState.tasks
+    val categories = uiState.categories
+    val projects = uiState.projects
     val categorySummaries = CategorySummaries(categories, projects, tasks)
     
     LazyColumn(
