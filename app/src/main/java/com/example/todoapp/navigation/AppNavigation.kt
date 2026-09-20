@@ -62,7 +62,12 @@ fun AppNavigation() {
             AddProjectScreen(
                 viewModel = viewModel,
                 onBack= {navController.popBackStack()},
-                onDone = { projectId -> navController.navigate(Routes.projectDetail(projectId)) }
+                onDone = { projectId ->
+                    navController.navigate(Routes.projectDetail(projectId)) {
+                        popUpTo(Routes.ADD_PROJECT) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -95,7 +100,7 @@ fun AppNavigation() {
                         viewModel = viewModel,
                         projectId = projectId,
                         onAddTask = { navController.navigate(Routes.addTask(projectId)) },
-                        onBack = { navController.navigate(Routes.MAIN_LAYOUT) }
+                        onBack = { navController.popBackStack() }
                     )
                 }
             }

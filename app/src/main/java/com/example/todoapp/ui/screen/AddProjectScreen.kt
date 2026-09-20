@@ -92,11 +92,15 @@ fun AddProjectContent(
     var nameError by rememberSaveable {
         mutableStateOf("")
     }
+    var isSaving by rememberSaveable {
+        mutableStateOf(false)
+    }
 
-    val canCreate: Boolean = formState.categoryId != 0 &&
+    val isFormValid: Boolean = formState.categoryId != 0 &&
             formState.name.isNotBlank() &&
             (formState.endDate.isAfter(formState.startDate)
                     ||formState.endDate.isEqual(formState.startDate))
+    val canCreate = isFormValid && !isSaving
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
@@ -151,7 +155,9 @@ fun AddProjectContent(
         Button(
             enabled = canCreate,
             onClick = {
-                if(canCreate) {
+                // Read isSaving directly so a second tap is rejected even before recomposition.
+                if (isFormValid && !isSaving) {
+                        isSaving = true
                         val project: Project = viewModel.createProject (
                             name = formState.name,
                             description = formState.description,
@@ -176,7 +182,7 @@ fun AddProjectContent(
             )
         ) {
             Text(
-                text = "Create Project",
+                text = if (isSaving) "Creating..." else "Create Project",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
