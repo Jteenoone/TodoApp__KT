@@ -112,9 +112,9 @@ class TodoViewModel(
         }
     }
 
-    fun addProject(project: Project) {
+    fun addProject(project: Project, onAdded: (Int) -> Unit = {}) {
         viewModelScope.launch {
-            repository.addProject(project)
+            onAdded(repository.addProject(project))
         }
     }
 

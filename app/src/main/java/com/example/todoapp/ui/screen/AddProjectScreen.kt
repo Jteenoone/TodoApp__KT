@@ -159,10 +159,9 @@ fun AddProjectContent(
                             startDate = formState.startDate,
                             endDate = formState.endDate
                         )
-                        viewModel.addProject(
-                            project = project
-                        )
-                        onDone(project.id)
+                        viewModel.addProject(project = project) { projectId ->
+                            onDone(projectId)
+                        }
                     } else {
                         if(formState.name.isBlank()) {
                             nameError = "Tên không được để trống"

@@ -10,6 +10,4 @@ data class Project(
     val description: String,
     val startDate: LocalDate,
     val endDate: LocalDate
-) {
-
-}
+)

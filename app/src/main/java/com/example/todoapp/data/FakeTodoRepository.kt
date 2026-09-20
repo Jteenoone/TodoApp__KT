@@ -6,7 +6,8 @@ import com.example.todoapp.model.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -28,7 +29,7 @@ class FakeTodoRepository : TodoRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime): Task {
         val newTask = Task(
-            id = _tasksFlow.value.size + 1,
+            id = (_tasksFlow.value.maxOfOrNull { it.id } ?: 0) + 1,
             name = name,
             title = title,
             projectId = projectId,
@@ -47,7 +48,7 @@ class FakeTodoRepository : TodoRepository {
         endDate: LocalDate
     ): Project {
         val newProject = Project(
-            id = _projectsFlow.value.size + 1,
+            id = (_projectsFlow.value.maxOfOrNull { it.id } ?: 0) + 1,
             name = name,
             categoryId = categoryId,
             description = description,
@@ -56,31 +57,37 @@ class FakeTodoRepository : TodoRepository {
         )
         return newProject
     }
-    override fun getCategoryById(categoryId: Int): Category? {
-        return _categoriesFlow.value.find {it.id == categoryId}
-    }
+    override fun getCategoryById(categoryId: Int): Flow<Category?> =
+        _categoriesFlow.map { categories -> categories.find { it.id == categoryId } }
 
-    override fun getCategoryByProject(projectId: Int): Category? {
-        return _categoriesFlow.value.find {it.id == getProjectById(projectId)?.categoryId}
-    }
-    override fun getTasksByDate(date: LocalDate): List<Task> {
+    override fun getCategoryByProject(projectId: Int): Flow<Category?> =
+        combine(_projectsFlow, _categoriesFlow) { projects, categories ->
+            val categoryId = projects.find { it.id == projectId }?.categoryId
+            categories.find { it.id == categoryId }
+        }
+
+    override fun getTasksByDate(date: LocalDate): Flow<List<Task>> {
         val startDate = date.atStartOfDay()
         val endDate = date.atTime(LocalTime.MAX)
 
-        return _tasksFlow.value.filter {
-            it.startDate.isBefore(endDate) && it.endDate.isAfter(startDate)
-        }.sortedBy { it.startDate }
+        return _tasksFlow.map { tasks ->
+            tasks.filter {
+                it.startDate <= endDate && it.endDate >= startDate
+            }.sortedBy { it.startDate }
+        }
     }
 
-    override fun getTaskById(taskId: Int): Task? =
-        _tasksFlow.value.find { it.id == taskId }
-    override fun getTasksByProject(projectId: Int): List<Task> =
-        _tasksFlow.value.filter { it.projectId == projectId }
+    override fun getTaskById(taskId: Int): Flow<Task?> =
+        _tasksFlow.map { tasks -> tasks.find { it.id == taskId } }
 
-    override suspend fun addTask(task: Task) {
+    override fun getTasksByProject(projectId: Int): Flow<List<Task>> =
+        _tasksFlow.map { tasks -> tasks.filter { it.projectId == projectId } }
+
+    override suspend fun addTask(task: Task): Int {
         _tasksFlow.update {
                 current -> current + task
         }
+        return task.id
     }
 
     override suspend fun updateTask(updatedTask: Task) {
@@ -94,12 +101,12 @@ class FakeTodoRepository : TodoRepository {
         _tasksFlow.value = _tasksFlow.value.filter { it.id != taskId }
     }
 
-    override fun getProjectById(projectId: Int): Project? {
-        return _projectsFlow.value.find {it.id == projectId}
-    }
+    override fun getProjectById(projectId: Int): Flow<Project?> =
+        _projectsFlow.map { projects -> projects.find { it.id == projectId } }
 
-    override suspend fun addProject(project: Project) {
+    override suspend fun addProject(project: Project): Int {
         _projectsFlow.value += project
+        return project.id
     }
 
     override suspend fun updateProject(updatedProject: Project) {
@@ -111,8 +118,9 @@ class FakeTodoRepository : TodoRepository {
     override suspend fun deleteProject(projectId: Int) {
         _projectsFlow.value = _projectsFlow.value.filter { it.id != projectId }
     }
-    override suspend fun addCategory(category: Category) {
+    override suspend fun addCategory(category: Category): Int {
         _categoriesFlow.value += category
+        return category.id
     }
 
     override suspend fun deleteCategory(categoryId: Int) {

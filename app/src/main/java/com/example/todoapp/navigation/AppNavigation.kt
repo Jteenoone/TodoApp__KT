@@ -17,7 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.todoapp.data.FakeTodoRepository
+import com.example.todoapp.data.RoomTodoRepository
+import com.example.todoapp.data.local.AppDatabase
 import com.example.todoapp.ui.screen.AddProjectScreen
 import com.example.todoapp.ui.screen.AddTaskScreen
 import com.example.todoapp.ui.screen.MainLayout
@@ -30,9 +31,11 @@ import com.example.todoapp.viewmodel.TodoViewModelFactory
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
-    val factory = remember {
-        TodoViewModelFactory(FakeTodoRepository())
+    val factory = remember(context) {
+        val database = AppDatabase.getInstance(context)
+        TodoViewModelFactory(RoomTodoRepository(database))
     }
     val viewModel: TodoViewModel = viewModel(factory = factory)
     NavHost(
